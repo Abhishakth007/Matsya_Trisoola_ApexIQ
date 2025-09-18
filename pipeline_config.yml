@@ -1,0 +1,132 @@
+# Integrated Maritime Pipeline Configuration
+# Complete configuration for vessel detection and AIS correlation
+
+maritime_pipeline:
+  # Pipeline identification
+  version: "1.0.0"
+  description: "Integrated vessel detection and AIS correlation pipeline"
+  
+  # Detection configuration
+  detection:
+    # Window processing parameters
+    default_window_size: 200        # Optimized for small vessel detection
+    default_overlap: 100            # High overlap for better coverage
+    
+    # Detection thresholds
+    thresholds:
+      conf_threshold: 0.15          # Lowered for better recall
+      nms_threshold: 0.5            # IoU threshold for duplicate removal
+    
+    # Model paths
+    sentinel1_detector: "${PROJECT_ROOT:-.}/data/model_artifacts/sentinel-1/frcnn_cmp2/3dff445"
+    sentinel1_postprocessor: "${PROJECT_ROOT:-.}/data/model_artifacts/sentinel-1/attr/c34aa37"
+    
+    # Processing options
+    save_crops: true
+    max_memory_gb: 8.0
+    device: "auto"  # auto, cuda, cpu
+  
+  # Attribute filtering configuration
+  filtering:
+    min_attributes_required: 3      # Minimum vessel attributes for quality filter
+    min_confidence_for_correlation: 0.30  # Higher threshold for correlation input
+    
+    # Quality filters
+    vessel_size_limits:
+      min_length_m: 5               # Minimum realistic vessel length
+      max_length_m: 500             # Maximum realistic vessel length
+      max_speed_knots: 50           # Maximum realistic vessel speed
+    
+    # Attribute requirements
+    required_attributes:
+      - vessel_length_m
+      - vessel_width_m
+      - vessel_speed_k
+      - vessel_type
+      - heading_degrees
+      - is_fishing_vessel
+  
+  # AIS correlation configuration
+  correlation:
+    # Spatial parameters
+    spatial_gate_radius: 10000.0    # 10km base radius
+    max_distance_hard_limit: 25000.0  # 25km absolute maximum
+    
+    # Temporal parameters
+    max_temporal_gap_hours: 2.0     # Maximum time gap to search
+    dt_search_step_minutes: 5.0     # Time step for temporal search
+    
+    # Matching thresholds
+    confidence_threshold: 0.5       # Minimum match confidence
+    
+    # Scoring weights (must sum to 1.0)
+    scoring_weights:
+      position: 0.40                # 40% - most important
+      heading: 0.20                 # 20% - direction matching
+      size: 0.20                    # 20% - vessel size matching
+      speed: 0.10                   # 10% - speed matching
+      type: 0.05                    # 5% - vessel type matching
+      temporal: 0.05                # 5% - time gap penalty
+  
+  # Visualization configuration
+  visualization:
+    # Output formats
+    create_geojson: true
+    create_bbox_images: true
+    create_correlation_status: true
+    create_split_visualizations: true
+    
+    # Image parameters
+    bbox_line_thickness: 3
+    label_font_size: 0.6
+    downsample_large_images: true
+    max_full_scene_size: 4000       # Pixels
+    
+    # Colors (BGR format for OpenCV)
+    colors:
+      correlated_vessel: [0, 255, 0]     # Green
+      dark_ship: [0, 0, 255]             # Red
+      high_confidence: [0, 255, 0]       # Green
+      medium_confidence: [0, 255, 255]   # Yellow
+      low_confidence: [0, 165, 255]      # Orange
+      very_low_confidence: [0, 0, 255]   # Red
+  
+  # Land mask configuration
+  land_masking:
+    enabled: true
+    shoreline_extension_pixels: 100  # 1km buffer (10m/pixel)
+    apply_to_detection: true
+    apply_to_correlation: false
+  
+  # Output configuration
+  output:
+    # Directory structure
+    create_timestamped_dirs: true
+    preserve_intermediate_files: true
+    
+    # File formats
+    csv_format:
+      include_all_attributes: true
+      decimal_precision: 6
+    
+    geojson_format:
+      include_bounding_boxes: true
+      include_pixel_coordinates: true
+      include_heading_probabilities: true
+    
+    # Visualization formats
+    image_format: "png"
+    image_dpi: 300
+    image_quality: 95
+
+# Legacy compatibility (for existing systems)
+main:
+  # Keep existing config structure for backward compatibility
+  default_window_size: 200
+  default_overlap: 100
+  thresholds:
+    conf_threshold: 0.15
+    nms_threshold: 0.5
+  save_crops: true
+  sentinel1_detector: "${PROJECT_ROOT:-.}/data/model_artifacts/sentinel-1/frcnn_cmp2/3dff445"
+  sentinel1_postprocessor: "${PROJECT_ROOT:-.}/data/model_artifacts/sentinel-1/attr/c34aa37"

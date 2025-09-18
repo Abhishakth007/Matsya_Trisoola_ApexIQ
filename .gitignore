@@ -1,0 +1,57 @@
+# SAR Image Data - Exclude these large files
+*.SAFE/
+*.tif
+*.tiff
+*.TIF
+*.TIFF
+
+# SNAP output files (very large processed images)
+snap_output/*.tif
+snap_output/*.img
+snap_output/**/*.img
+snap_output/**/*.hdr
+
+# Raw SAR data files
+data/S1A_IW_GRDH_1SDV_*/
+data/S2C_MSIL1C_*/
+data/*.tiff
+data/**/*.tiff
+
+# Large model weights (use model download instead)
+*.pth
+torch_weights/
+src/model_artifacts/**/*.pth
+
+# Large PyTorch library files
+*.dll
+*.lib
+*.so.*
+
+# Python virtual environment (use requirements_frozen.txt instead)
+.env310/
+.env/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Log files that might be too verbose
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini

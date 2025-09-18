@@ -1,0 +1,30 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+
+fastapi==0.103.*
+gdal>=3.8      # needs newer for Python 3.13, wheels exist for 3.8+
+google-cloud-storage==2.5.*
+lightgbm>=4.5  # latest stable, 3.3 is too old for Python 3.13
+mapcalc==0.2.*
+numpy>=1.26
+pandas>=2.2    # pandas 1.4 doesn’t support Python 3.13
+prometheus-client>=0.20
+pyfaktory==0.2.*
+pyproj>=3.6
+pytest>=8.0
+python-dateutil==2.8.*
+rasterio>=1.4
+requests>=2.32
+s2cloudless==1.7.*
+scikit-image>=0.22
+scikit-learn>=1.5
+sentinelsat==1.2.*
+torch>=2.3
+torchvision>=0.18
+urllib3>=2.2
+uvicorn>=0.29
+wandb>=0.17
+wheel
+
+# Geo-related
+geopandas>=0.14.0  # For shapefile export
+shapely>=2.0.0     # For geometry operations

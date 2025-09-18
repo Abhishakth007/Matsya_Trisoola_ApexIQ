@@ -1,0 +1,10 @@
+main:
+  # Minimal single-source configuration for robust pipeline
+  default_window_size: 200  # Reduced for better coverage
+  default_overlap: 100   # Proportional overlap increase
+  thresholds:
+    conf_threshold: 0.50  # Further lowered for maximum detection
+    nms_threshold: 0.5    # Keep NMS at 0.5 (working well)
+  save_crops: true
+  sentinel1_detector: ${PROJECT_ROOT:-.}/data/model_artifacts/sentinel-1/frcnn_cmp2/3dff445
+  sentinel1_postprocessor: ${PROJECT_ROOT:-.}/data/model_artifacts/sentinel-1/attr/c34aa37

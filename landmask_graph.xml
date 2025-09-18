@@ -1,0 +1,67 @@
+<graph id="LandSeaMaskGraph">
+    <version>1.0</version>
+
+    <!-- Step 2: Read Step 1 Output -->
+    <node id="Read_Step1">
+        <operator>Read</operator>
+        <sources/>
+        <parameters>
+            <file>snap_output/step1_read.dim</file>
+        </parameters>
+    </node>
+
+    <!-- Step 3: Calibration -->
+    <node id="Calibration">
+        <operator>Calibration</operator>
+        <sources>
+            <sourceProduct refid="Read_Step1"/>
+        </sources>
+        <parameters>
+            <auxFile>Latest Auxiliary File</auxFile>
+            <outputImageInComplex>false</outputImageInComplex>
+            <outputImageScaleInDb>false</outputImageScaleInDb>
+            <createGammaBand>false</createGammaBand>
+            <createBetaBand>false</createBetaBand>
+            <outputSigmaBand>true</outputSigmaBand>
+            <selectedPolarisations>VV,VH</selectedPolarisations>
+        </parameters>
+    </node>
+
+    <!-- Step 4: Land-Sea Mask -->
+    <node id="LandSeaMask">
+        <operator>Land-Sea-Mask</operator>
+        <sources>
+            <sourceProduct refid="Calibration"/>
+        </sources>
+        <parameters>
+            <landMask>true</landMask>
+            <useSRTM>true</useSRTM>
+            <shorelineExtension>50</shorelineExtension>
+            <sourceBands/>
+        </parameters>
+    </node>
+
+    <!-- Step 5: Write to GeoTIFF -->
+    <node id="Write">
+        <operator>Write</operator>
+        <sources>
+            <sourceProduct refid="LandSeaMask"/>
+        </sources>
+        <parameters>
+            <file>snap_output/step4_final_output.tif</file>
+            <formatName>GeoTIFF</formatName>
+        </parameters>
+    </node>
+
+    <!-- Step 6: Write to DIM (for mask info) -->
+    <node id="WriteDIM">
+        <operator>Write</operator>
+        <sources>
+            <sourceProduct refid="LandSeaMask"/>
+        </sources>
+        <parameters>
+            <file>snap_output/step4_final_output.dim</file>
+            <formatName>BEAM-DIMAP</formatName>
+        </parameters>
+    </node>
+</graph>
